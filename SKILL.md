@@ -1,15 +1,15 @@
 ---
 name: trust-receipt
-description: Validate an on-chain service report against a user-confirmed EVM task scope, compare one correction, and replay local or public trust receipts. Use for bounded report intake, deterministic verification, repair review, or receipt verification; not for publishing, chain writes, arbitrary report formats, or accounting advice.
+description: Use TreasuryTally to validate an on-chain service report against a user-confirmed EVM task scope, compare one correction, and replay local or public verification receipts. Applies to bounded report intake, deterministic verification, repair review, or receipt verification; not publishing, chain writes, arbitrary report formats, or accounting advice.
 ---
 
-# Trust Receipt Workflow
+# TreasuryTally Workflow
 
 Use the repository's stable deterministic entry points. This skill coordinates them; it does not calculate amounts, invent findings, or replace the verification engine.
 
 ## Establish the boundary
 
-1. Locate the `trust-receipt` project root. Require its installed environment or a Python environment that can import `trust_receipt`.
+1. Locate the TreasuryTally project root (the repository/package may retain the compatibility identifier `trust-receipt`). Require its installed environment or a Python environment that can import `trust_receipt`.
 2. Treat the supplied report as an untrusted strict `UploadedReport` JSON file. Keep it private unless the user separately authorizes publication.
 3. Select one declared mode:
    - `read-only-live`: use a configured Sepolia RPC as independent reference evidence.

@@ -1,8 +1,8 @@
-# Trust Receipt Skill
+# TreasuryTally Skill
 
-A safety-bounded Codex skill for validating a strict on-chain service report against a user-confirmed EVM task scope, comparing one correction, and replaying trust receipts.
+A safety-bounded Codex skill for running TreasuryTally verification against a user-confirmed EVM task scope, comparing one correction, and replaying verification receipts.
 
-The skill coordinates the deterministic [信据 Agent / Trust Receipt](https://github.com/CH-ZHOU-0512/xinjv) core. It does not calculate authoritative amounts, invent findings, publish files, deploy contracts, or write on-chain.
+The skill coordinates the deterministic [TreasuryTally](https://github.com/CH-ZHOU-0512/xinjv) core. It does not calculate authoritative amounts, invent findings, publish files, deploy contracts, or write on-chain.
 
 ## What it provides
 
@@ -29,9 +29,11 @@ git clone https://github.com/CH-ZHOU-0512/trust-receipt-skill.git "$env:USERPROF
 
 Restart or refresh Codex skill discovery, then invoke `$trust-receipt`.
 
+`trust-receipt-skill`, `trust-receipt`, and `trust_receipt` are retained compatibility identifiers for the existing repository URL, installed skill discovery, Python imports, and stable CLI/MCP integrations. The user-facing product name is TreasuryTally; this release does not rename or overwrite an existing global skill installation.
+
 ## Runtime requirement
 
-The instructions and `compare_results.py` helper are self-contained. Live input validation and report verification require the Trust Receipt project or an environment where its `trust_receipt` Python package is importable. Run project commands from that project's root so `src/trust_receipt` can be discovered, or install the package into the active Python environment.
+The instructions and `compare_results.py` helper are self-contained. Live input validation and report verification require TreasuryTally or an environment where its compatibility package `trust_receipt` is importable. Run project commands from that project's root so `src/trust_receipt` can be discovered, or install the package into the active Python environment.
 
 This repository intentionally does not vendor the application, RPC adapter, verification engine, database, receipts, credentials, or fixture evidence.
 
@@ -49,7 +51,7 @@ See [SKILL.md](SKILL.md) for agent instructions and [references/](references/) f
 
 ## Validate the skill
 
-From a checkout of the Trust Receipt application:
+From a checkout of the TreasuryTally application:
 
 ```powershell
 python <path-to-this-repo>\scripts\validate_inputs.py `

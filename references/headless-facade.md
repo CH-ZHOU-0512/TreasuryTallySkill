@@ -6,7 +6,7 @@ This optional path applies only when the project includes an executable `Headles
 
 Copy `docs/m16/mcp-workspaces.example.json` to the Git-ignored `docs/m16/mcp-workspaces.local.json`, replace the handle with a random opaque value, and point its operator-only directory and project root at the intended local workspace. Do not place secrets in this file.
 
-From the Trust Receipt project root, start the stdio server through an MCP client with the equivalent command:
+From the TreasuryTally project root, start the stdio server through an MCP client with the equivalent command:
 
 ```powershell
 .\.venv\Scripts\python.exe -m trust_receipt.mcp_server.cli `

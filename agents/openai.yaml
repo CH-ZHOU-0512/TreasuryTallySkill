@@ -1,4 +1,4 @@
 interface:
-  display_name: "信据 Agent"
-  short_description: "Validate on-chain reports with bounded receipt workflows"
-  default_prompt: "Use $trust-receipt to validate a confirmed task scope and verify my report without publishing or writing on-chain."
+  display_name: "TreasuryTally"
+  short_description: "Run bounded TreasuryTally report and receipt verification"
+  default_prompt: "Use $trust-receipt to run TreasuryTally against my confirmed task scope without publishing or writing on-chain."
