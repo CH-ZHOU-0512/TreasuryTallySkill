@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "task_id": "replace-with-confirmed-task-id",
+  "chain_id": 11155111,
+  "token_address": "0x0000000000000000000000000000000000000001",
+  "treasury_addresses": ["0x0000000000000000000000000000000000000002"],
+  "recipient_addresses": ["0x0000000000000000000000000000000000000003"],
+  "start_block": 1,
+  "end_block": 1,
+  "exclusion_rules": [],
+  "max_records": 200,
+  "confirmed_at": "2026-01-01T00:00:00Z",
+  "spec_hash": "replace-through-the-confirmation-flow"
+}

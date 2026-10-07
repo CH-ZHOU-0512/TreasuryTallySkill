@@ -1,0 +1,15 @@
+{
+  "interface_version": "1.0",
+  "workspace_handle": "ws_replace_with_configured_handle",
+  "profile": "LIVE_READ_ONLY",
+  "steps": [
+    {"method": "draft_task", "arguments": {"user_request": "Verify one confirmed Sepolia ERC-20 report scope."}},
+    {"method": "prepare_task_confirmation", "arguments": {"candidate": "<TaskSpecCandidate returned by draft_task>"}, "next": "Approve the exact challenge through the documented local interactive command outside MCP."},
+    {"method": "confirm_task", "arguments": {"challenge_id": "ch_<approved-confirmation-challenge>"}},
+    {"method": "prepare_report_verification", "arguments": {"task_id": "<confirmed-task-id>", "report_json": "<inline UploadedReport 1.0 JSON, not a path or URI>"}, "next": "Approve the exact challenge through the documented local interactive command outside MCP."},
+    {"method": "verify_report", "arguments": {"challenge_id": "ch_<approved-verification-challenge>"}},
+    {"method": "get_result", "arguments": {"task_id": "<confirmed-task-id>", "attempt": 1}},
+    {"method": "get_receipt", "arguments": {"task_id": "<confirmed-task-id>", "attempt": 1}},
+    {"method": "replay_receipt", "arguments": {"task_id": "<confirmed-task-id>", "attempt": 1}}
+  ]
+}
