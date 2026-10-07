@@ -60,6 +60,8 @@ If the installed project exposes an executable `HeadlessTrustReceiptPort 1.0`, r
 
 Task confirmation and report verification each require a prepared challenge followed by approval through a local interactive command that is deliberately not an MCP tool. Never treat a model-generated boolean, phrase, repeated call, or earlier general request as approval of a challenge. Display its summary, digest, action, attempt, and expiry; ask the user to complete the local approval step; then consume that same challenge. Repeated consumption may return an idempotent result and must not be presented as a new attempt.
 
+When `confirm_task` or `verify_report` returns `AUTHORIZATION_REQUIRED` with `LOCAL_APPROVAL_REQUIRED`, stop the tool sequence. Do not run the approval CLI yourself, including in a shell or by piping the confirmation phrase. Only continue after the user independently completes the documented interactive command.
+
 ## Authorization and stopping rules
 
 - Local validation, read-only RPC access, comparison, and receipt replay are allowed within the user's supplied files and scope.

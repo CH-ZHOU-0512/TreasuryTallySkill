@@ -30,4 +30,4 @@ The output's `ok` field means evidence was conclusive, not that the report passe
 
 ## Comparison
 
-`scripts/compare_results.py` accepts exactly two saved evaluation outputs with the same `task_id` and `spec_hash`. It rejects a before-result that is already `PASS`, rejects non-project outcomes, and reports resolved, remaining, and newly observed finding IDs. Exit `0` means the two outputs are structurally comparable, not that attempt 2 passed.
+`scripts/compare_results.py` accepts exactly two saved evaluation outputs. M11 outputs must share `task_id + spec_hash`; M16 headless outputs must share `workspace_handle + task_id`. It rejects a before-result that is already `PASS`, rejects non-project outcomes, and reports resolved, remaining, and newly observed finding IDs. Exit `0` means the two outputs are structurally comparable, not that attempt 2 passed.

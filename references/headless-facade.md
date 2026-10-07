@@ -2,6 +2,19 @@
 
 This optional path applies only when the project includes an executable `HeadlessTrustReceiptPort 1.0` implementation. A frozen protocol or MCP tool list without a working facade is not executable evidence.
 
+## Start the local server
+
+Copy `docs/m16/mcp-workspaces.example.json` to the Git-ignored `docs/m16/mcp-workspaces.local.json`, replace the handle with a random opaque value, and point its operator-only directory and project root at the intended local workspace. Do not place secrets in this file.
+
+From the Trust Receipt project root, start the stdio server through an MCP client with the equivalent command:
+
+```powershell
+.\.venv\Scripts\python.exe -m trust_receipt.mcp_server.cli `
+  --config docs\m16\mcp-workspaces.local.json
+```
+
+The MCP client, not an interactive terminal, owns this stdio process because stdout is reserved for JSON-RPC. The server exposes exactly eight tools: `draft_task_candidate`, `prepare_task_confirmation`, `confirm_task`, `prepare_report_verification`, `verify_report`, `get_verification_result`, `get_receipt`, and `replay_receipt`.
+
 ## Fixed methods
 
 Use only these methods:
@@ -21,13 +34,25 @@ Use only these methods:
 
 1. Draft and show the candidate, including missing fields, ambiguity, profile, and `fixture_test_only`.
 2. Call `prepare_task_confirmation` once. Show the returned challenge's action, summary, payload digest, expiry, and `PENDING` state.
-3. Stop before confirmation and instruct the user to approve that exact challenge with the product's local interactive approval command. The approval command is outside MCP and may require an active terminal/user gesture; do not invent its syntax if the implementation has not documented it.
+3. Call `confirm_task` only to observe whether authorization is still required. If it returns `AUTHORIZATION_REQUIRED` / `LOCAL_APPROVAL_REQUIRED`, stop. Show the challenge and ask the user to run these commands in another local terminal:
+
+   ```powershell
+   .\.venv\Scripts\python.exe -m trust_receipt.headless.cli `
+     --config docs\m16\mcp-workspaces.local.json `
+     inspect --workspace <workspace-handle> --challenge <challenge-id>
+
+   .\.venv\Scripts\python.exe -m trust_receipt.headless.cli `
+     --config docs\m16\mcp-workspaces.local.json `
+     approve --workspace <workspace-handle> --challenge <challenge-id>
+   ```
+
+   The approval command prompts for the full `APPROVE <challenge-id>` phrase and has no `--yes` option. The assistant must not run, simulate, pipe input into, or bypass it.
 4. After the user reports completion, call `confirm_task` with the same workspace and challenge ID. Verify `state=CONFIRMED` and retain the returned `task_id` and `spec_hash`.
 
 ## Report verification authorization
 
 1. Call `prepare_report_verification` with the confirmed task ID and inline report JSON. It does not execute RPC or consume an attempt.
-2. Show the challenge summary, payload digest, proposed attempt, expiry, and `PENDING` state. Ask for the separate local approval step.
+2. Show the challenge summary, payload digest, proposed attempt, expiry, and `PENDING` state. If `verify_report` reports `AUTHORIZATION_REQUIRED`, stop and ask the user to run the same `inspect` and interactive `approve` commands for this report challenge. The assistant must not execute the approval.
 3. After approval, call `verify_report` with the same workspace and challenge ID. Do not resend or mutate the report between preparation and consumption.
 4. Show the returned profile, `fixture_test_only`, attempt, three-state outcome, integer amount/count, evidence completeness, diagnostics, findings, receipt hash, and `idempotent_replay`.
 5. For attempt 2, repeat preparation only when attempt 1 is `FAIL` or `INCONCLUSIVE`. Never request attempt 3. Use `get_result`, `get_receipt`, and `replay_receipt` for reads; reads need no invented approval.

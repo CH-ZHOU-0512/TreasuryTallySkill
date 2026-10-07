@@ -34,8 +34,10 @@ def _load(path: Path) -> dict[str, Any]:
         raise ValueError("result must be a JSON object")
     if value.get("outcome") not in OUTCOMES:
         raise ValueError("result has an invalid outcome")
-    if not isinstance(value.get("task_id"), str) or not isinstance(value.get("spec_hash"), str):
+    if not isinstance(value.get("task_id"), str):
         raise ValueError("result is missing task identity")
+    if not isinstance(value.get("spec_hash"), str) and not isinstance(value.get("workspace_handle"), str):
+        raise ValueError("result is missing confirmed scope identity")
     if not isinstance(value.get("findings"), list):
         raise ValueError("result findings must be a list")
     return value
@@ -50,8 +52,15 @@ def _finding_ids(result: dict[str, Any]) -> set[str]:
     return identifiers
 
 
+def _scope_identity(result: dict[str, Any]) -> tuple[str, str, str]:
+    spec_hash = result.get("spec_hash")
+    if isinstance(spec_hash, str):
+        return ("spec_hash", result["task_id"], spec_hash)
+    return ("workspace_task", result["workspace_handle"], result["task_id"])
+
+
 def compare(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
-    if (before["task_id"], before["spec_hash"]) != (after["task_id"], after["spec_hash"]):
+    if _scope_identity(before) != _scope_identity(after):
         raise ValueError("attempt results use different confirmed scopes")
     if before["outcome"] == "PASS":
         raise ValueError("a second attempt is not allowed after PASS")
@@ -60,7 +69,8 @@ def compare(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
     return {
         "ok": True,
         "task_id": before["task_id"],
-        "spec_hash": before["spec_hash"],
+        "spec_hash": before.get("spec_hash"),
+        "workspace_handle": before.get("workspace_handle"),
         "before_outcome": before["outcome"],
         "after_outcome": after["outcome"],
         "resolved_finding_ids": sorted(before_ids - after_ids),
