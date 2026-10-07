@@ -36,8 +36,10 @@ def _load(path: Path) -> dict[str, Any]:
         raise ValueError("result has an invalid outcome")
     if not isinstance(value.get("task_id"), str):
         raise ValueError("result is missing task identity")
-    if not isinstance(value.get("spec_hash"), str) and not isinstance(value.get("workspace_handle"), str):
-        raise ValueError("result is missing confirmed scope identity")
+    if not isinstance(value.get("spec_hash"), str):
+        raise ValueError("result is missing confirmed scope hash")
+    if "workspace_handle" in value and not isinstance(value["workspace_handle"], str):
+        raise ValueError("result has an invalid workspace identity")
     if not isinstance(value.get("findings"), list):
         raise ValueError("result findings must be a list")
     return value
@@ -52,11 +54,8 @@ def _finding_ids(result: dict[str, Any]) -> set[str]:
     return identifiers
 
 
-def _scope_identity(result: dict[str, Any]) -> tuple[str, str, str]:
-    spec_hash = result.get("spec_hash")
-    if isinstance(spec_hash, str):
-        return ("spec_hash", result["task_id"], spec_hash)
-    return ("workspace_task", result["workspace_handle"], result["task_id"])
+def _scope_identity(result: dict[str, Any]) -> tuple[str | None, str, str]:
+    return (result.get("workspace_handle"), result["task_id"], result["spec_hash"])
 
 
 def compare(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:

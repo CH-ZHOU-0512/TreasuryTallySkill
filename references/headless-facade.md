@@ -33,7 +33,7 @@ Use only these methods:
 ## Confirmation authorization
 
 1. Draft and show the candidate, including missing fields, ambiguity, profile, and `fixture_test_only`.
-2. Call `prepare_task_confirmation` once. Show the returned challenge's action, summary, payload digest, expiry, and `PENDING` state.
+2. Call `prepare_task_confirmation` once. Show the returned challenge's action, summary, payload digest, expiry, and `PENDING` state. The digest is workspace-bound, so the same candidate prepared in another workspace must not be treated as equivalent authorization.
 3. Call `confirm_task` only to observe whether authorization is still required. If it returns `AUTHORIZATION_REQUIRED` / `LOCAL_APPROVAL_REQUIRED`, stop. Show the challenge and ask the user to run these commands in another local terminal:
 
    ```powershell
@@ -52,12 +52,12 @@ Use only these methods:
 ## Report verification authorization
 
 1. Call `prepare_report_verification` with the confirmed task ID and inline report JSON. It does not execute RPC or consume an attempt.
-2. Show the challenge summary, payload digest, proposed attempt, expiry, and `PENDING` state. If `verify_report` reports `AUTHORIZATION_REQUIRED`, stop and ask the user to run the same `inspect` and interactive `approve` commands for this report challenge. The assistant must not execute the approval.
+2. Show the challenge summary, payload digest, `task_spec_hash`, proposed attempt, expiry, and `PENDING` state. The digest binds interface version, workspace, action, report content, task, task scope hash, and attempt. If `verify_report` reports `AUTHORIZATION_REQUIRED`, stop and ask the user to run the same `inspect` and interactive `approve` commands for this report challenge. The assistant must not execute the approval.
 3. After approval, call `verify_report` with the same workspace and challenge ID. Do not resend or mutate the report between preparation and consumption.
 4. Show the returned profile, `fixture_test_only`, attempt, three-state outcome, integer amount/count, evidence completeness, diagnostics, findings, receipt hash, and `idempotent_replay`.
 5. For attempt 2, repeat preparation only when attempt 1 is `FAIL` or `INCONCLUSIVE`. Never request attempt 3. Use `get_result`, `get_receipt`, and `replay_receipt` for reads; reads need no invented approval.
 
-Challenges expire and are bound to workspace, action, payload digest, task, and attempt. A rejected, expired, cross-workspace, or digest-mismatched challenge must be prepared again; it must not be patched client-side. A consumed challenge may replay the prior result idempotently.
+Challenges expire and are bound to interface version, workspace, action, content digest, task, `task_spec_hash`, and attempt. A rejected, expired, cross-workspace, or digest-mismatched challenge must be prepared again; it must not be patched client-side. A consumed challenge may replay the prior result idempotently. In-flight, incomplete, or conflicting receipt state is a read-only stop; do not rerun it automatically. Concurrent approved challenges may race, but only the one that acquires the atomic attempt reservation may execute.
 
 `LIVE_READ_ONLY` is the default profile. Missing model/RPC configuration is `BLOCKED`; do not switch profiles. `FIXTURE_TEST_ONLY` is for local testing and every candidate, result, and receipt response must remain visibly marked `fixture_test_only=true`.
 
